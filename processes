@@ -1,0 +1,37 @@
+DECOMPOSE_PROCESSES=( 'generate_key' 'generate_crs'
+  'generate_self_signed_certificate' 'create_bundled_certificate' )
+
+# https://wiki.archlinux.org/index.php/OpenSSL#Generating_keys
+
+_decompose-process-generate_key() {
+  mkdir -m0700 private
+  touch private/key.pem
+  chmod 0600 private/key.pem
+  openssl genpkey -algorithm RSA -out private/key.pem -pkeyopt rsa_keygen_bits:4096
+}
+_decompose-process-generate_key_help() {
+  echo "  Generate a TLS private key"
+}
+
+_decompose-process-generate_crs() {
+  openssl req -new -sha256 -key private/key.pem -out req.csr
+}
+_decompose-process-generate_crs_help() {
+  echo "  Generate a crs file for security authority"
+}
+
+_decompose-process-generate_self_signed_certificate() {
+  openssl req -key private/key.pem -x509 -new -days 3650 -out cacert.pem
+}
+_decompose-process-generate_self_signed_certificate_help() {
+  echo "  Generate a self signed TLS certificate"
+}
+
+_decompose-process-create_bundled_certificate() {
+  cat ssl.crt sub.class2.server.ca.pem ca.pem > bundle.crt
+}
+_decompose-process-create_bundled_certificate_help() {
+  echo "  Bundle authority certifications with server certificate"
+}
+
+# vim:syntax=sh
