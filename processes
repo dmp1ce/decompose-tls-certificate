@@ -14,7 +14,9 @@ _decompose-process-generate_key_help() {
 }
 
 _decompose-process-generate_crs() {
-  # TODO: Create key if missing
+  if [ ! -f private/key.pem ]; then
+    _decompose-process-generate_key
+  fi
   openssl req -new -sha256 -key private/key.pem -out req.csr
 }
 _decompose-process-generate_crs_help() {
