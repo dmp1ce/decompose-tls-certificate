@@ -22,7 +22,9 @@ _decompose-process-generate_crs_help() {
 }
 
 _decompose-process-generate_self_signed_certificate() {
-  # TODO: Create key if missing
+  if [ ! -f private/key.pem ]; then
+    _decompose-process-generate_key
+  fi
   openssl req -key private/key.pem -x509 -new -days 3650 -out cacert.pem
 }
 _decompose-process-generate_self_signed_certificate_help() {
